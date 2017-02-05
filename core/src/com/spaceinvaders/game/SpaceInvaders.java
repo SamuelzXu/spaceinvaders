@@ -74,6 +74,7 @@ public class SpaceInvaders extends ApplicationAdapter implements InputProcessor{
             updateAll();
             drawAll();
 
+
             shot();
         }
 
@@ -375,7 +376,6 @@ public class SpaceInvaders extends ApplicationAdapter implements InputProcessor{
     private void reload(){//Reloads all game arrayLists
         aliens.clear();
         playerLasers.clear();
-        playerX=150;
         alienLasers.clear();
         walls.clear();
         loadAliens();
