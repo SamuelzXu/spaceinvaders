@@ -1,3 +1,19 @@
+//*********
+//Samuel Xu
+//SpaceInvaders.java
+//
+//Classes: Alien, Wall, Laser
+//
+//Features:
+//Lasers: Aliens fire lasers at you while you fire back
+//Destructible walls: barriers that break upon impact with lasers
+//Aliens: Aliens that you shoot with your laser
+//
+//Space invaders is a game where aliens slowly descend towards you, while you shoot lasers at them.
+//If the aliens reach the bottom of the screen, or if they hit you with their lasers, it's game over.
+//You win if you kill them all.
+//*********
+
 package com.spaceinvaders.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
@@ -71,7 +87,7 @@ public class SpaceInvaders extends ApplicationAdapter implements InputProcessor{
         batch.end();
     }
 
-    private void shot(){
+    private void shot(){//Handles the alien shot delay, once every 100 frames.
         shotTimer++;
         if(shotTimer==100){
             Random rand = new Random();
@@ -80,20 +96,20 @@ public class SpaceInvaders extends ApplicationAdapter implements InputProcessor{
             shotTimer=0;
         }
     }
-    private void updateAll(){
+    private void updateAll(){//Updates all sprite positions
         updateAliens();
         updateLasers();
         updatePlayer();
         updateWalls();
     }
-    private void drawAll(){
+    private void drawAll(){//Draws all Sprites
         drawAliens();
         drawLasers();
         drawPlayer();
         drawWalls();
         drawScore();
     }
-    private void loadAudio() {
+    private void loadAudio() {//Loads all audio batch files into hashmap
         sounds.put("snd1",Gdx.audio.newSound(Gdx.files.internal("1.mp3")));
         sounds.put("snd2",Gdx.audio.newSound(Gdx.files.internal("2.mp3")));
         sounds.put("snd3",Gdx.audio.newSound(Gdx.files.internal("3.mp3")));
@@ -104,14 +120,13 @@ public class SpaceInvaders extends ApplicationAdapter implements InputProcessor{
 
     }
 
-    private int checkGame(){
-        if(aliens.size()==0){
+    private int checkGame(){//Check for Game Over(2), Winner(1), or unresolved(3)
+        if(aliens.size()==0){//If no aliens left, you win
             System.out.println("You are winner!");
             return 1;
         }else{
             for(Alien alien:aliens){
-                if (alien.getRect().overlaps(endRect)||!playerAlive){
-                    System.out.println("You lose!");
+                if (alien.getRect().overlaps(endRect)||!playerAlive){//If aliens go over the boundaries, you lose
                     return 2;
                 }
             }
@@ -119,7 +134,7 @@ public class SpaceInvaders extends ApplicationAdapter implements InputProcessor{
         }
     }
 
-    private void loadAliens(){
+    private void loadAliens(){//Adds aliens to alien arraylist at specific positions
         for (int i=0;i<11;i++){
             aliens.add(new Alien(100+40*i,500,"1"));
             aliens.add(new Alien(100+40*i,460,"2"));
@@ -128,7 +143,7 @@ public class SpaceInvaders extends ApplicationAdapter implements InputProcessor{
             aliens.add(new Alien(100+40*i,340,"3"));
         }
     }
-    private void loadSprites(){
+    private void loadSprites(){//Loads Sprites hashmap
         sprites.put("winner", new Texture("winner.jpg"));
         sprites.put("gameover",new Texture("gameover.jpg"));
         sprites.put("alien1A",new Texture("alien1A.jpg"));
@@ -158,7 +173,7 @@ public class SpaceInvaders extends ApplicationAdapter implements InputProcessor{
         sprites.put("wall3Ab",new Texture("wall3Ab.jpg"));
         sprites.put("wall3Bb",new Texture("wall3Bb.jpg"));
     }
-    private void loadWalls(){
+    private void loadWalls(){//Adds walls to wall arraylist at specific positions
         for (int i=0;i<3;i++) {
             walls.add(new Wall(100+i*160, 60, 26, 15, sprites.get("wall3A"), sprites.get("wall3Ab")));
             walls.add(new Wall(156+i*160, 60, 26, 15, sprites.get("wall3B"), sprites.get("wall3Bb")));
@@ -170,30 +185,33 @@ public class SpaceInvaders extends ApplicationAdapter implements InputProcessor{
             walls.add(new Wall(156+i*160, 102, 26, 18, sprites.get("wall1C"), sprites.get("wall1Cb")));
         }
     }
-    private void loadPlayer(){
-        playerRect.set(playerX,playerY,40,25);
+    private void loadPlayer(){//Sets players starting positions
+        playerRect.set(playerX,playerY,250,25);
     }
 
-    private void takeInput() {
-        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)){
+    private void takeInput() {//Handles user input
+        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)){//Adjusts player position
             if(playerX>0) {
                 playerX -= 5;
                 playerRect.setX(playerX);
             }
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
+        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){//Adjusts player position
             if (playerX<540) {
                 playerX += 5;
                 playerRect.setX(playerX);
             }
         }
         if(Gdx.input.isKeyJustPressed((Input.Keys.SPACE))){
+            //Handles player laser shot
             if (laserCooldown>=80&&checkGame()==3){
+                //Create laser at player position
                 playerLasers.add(new Laser(playerX + 18, playerY + 25, 8));
                 laserCooldown=0;
-
+                //Play laser firing sound
                 sounds.get("fire").play();
             }
+            //If on gameover or winner screen and space is pressed, reload the game
             if (checkGame()==2||checkGame()==1){
                 reload();
                 playerAlive=true;
@@ -221,26 +239,26 @@ public class SpaceInvaders extends ApplicationAdapter implements InputProcessor{
         }
     }
     private void drawLasers() {
-        for(Laser laser:playerLasers){
+        for(Laser laser:playerLasers){//Draws all lasers in both arraylists
             batch.draw(sprites.get("laser"),laser.getX(),laser.getY());
         }
         for(Laser laser:alienLasers){
             batch.draw(sprites.get("laser"),laser.getX(),laser.getY());
         }
     }
-    private void drawPlayer(){
+    private void drawPlayer(){//Draws Player
         batch.draw(sprites.get("player"), playerX, playerY);
     }
-    private void drawWalls(){
+    private void drawWalls(){//Draws all walls
         for (Wall wall:walls){
             batch.draw(wall.getTex(),wall.getX(),wall.getY());
         }
     }
-    private void drawScore(){
+    private void drawScore(){//Draws Game score at specified position
 //        gameFont.draw(batch,"Score: "+score,200,400);
     }
 
-    private void updateLasers() {//Removes all inactive player and alien lasers, and moves them in their directions
+    private void updateLasers() {//Removes all inactive player and alien lasers, and updates positions
         for (int i=0;i<playerLasers.size();i++){
             if (playerLasers.get(i).getActive()){
                 playerLasers.get(i).update();
@@ -256,8 +274,9 @@ public class SpaceInvaders extends ApplicationAdapter implements InputProcessor{
             }
         }
     }
-    private void updateAliens() {
+    private void updateAliens() {//Update alien position and sprites
         if (ct>timeout){
+            //Omce the counter times out, sprites shift positions and change sprites.
             if(spritePos.equals("A")){
                 spritePos="B";
             }else{
@@ -267,6 +286,7 @@ public class SpaceInvaders extends ApplicationAdapter implements InputProcessor{
                 aliens.get(i).shiftX(dir);
             }
 
+            //Play corresponding sounds and sound counter increases
             sounds.get("snd"+Integer.toString(soundTick)).play();
             if(soundTick==4){
                 soundTick=1;
@@ -300,7 +320,7 @@ public class SpaceInvaders extends ApplicationAdapter implements InputProcessor{
             }
         }
     }
-    private void updatePlayer() {
+    private void updatePlayer() {//Update player position and status
         for (int i=0;i<alienLasers.size();i++){//Checks if any alien lasers have collided with the player
             if (playerRect.overlaps(alienLasers.get(i).getRect())){
                 alienLasers.remove(alienLasers.get(i));
@@ -311,6 +331,8 @@ public class SpaceInvaders extends ApplicationAdapter implements InputProcessor{
         }
     }
     private void updateWalls() {
+        //Checks for collsion with walls and aliens, alienLasers, playerLasers.
+        //If the wall is hit, remove it from the arrayList and destroy it.
         for (int i=0;i<walls.size();i++){
             for (int j=0;j<playerLasers.size();j++){
                 if (playerLasers.get(j).getRect().overlaps(walls.get(i).getRect())){
@@ -350,7 +372,7 @@ public class SpaceInvaders extends ApplicationAdapter implements InputProcessor{
         }
     }
 
-    private void reload(){
+    private void reload(){//Reloads all game arrayLists
         aliens.clear();
         playerLasers.clear();
         playerX=150;
@@ -363,8 +385,6 @@ public class SpaceInvaders extends ApplicationAdapter implements InputProcessor{
     @Override
     public void dispose() {
         batch.dispose();
-        sprites.get("player").dispose();
-        sprites.get("laser").dispose();
     }
 
     public boolean touchDown (int x, int y, int pointer, int button) {return true;}
@@ -397,10 +417,11 @@ public class SpaceInvaders extends ApplicationAdapter implements InputProcessor{
     }
 }
 
-class Wall {
+//****--WALL--****
+class Wall {//Wall class for wall chunks
     private float x,y;
     private Rectangle rect=new Rectangle();
-    private Texture tex,tex2;
+    private Texture tex,tex2;//Broken and unbroken textures for walls
     private int life=2;
 
     public Wall(float x, float y, float width, float length, Texture tex, Texture tex2){
@@ -411,7 +432,7 @@ class Wall {
         this.tex2=tex2;
     }
 
-    public Texture getTex(){
+    public Texture getTex(){//Returns correct texture
         if(life==2){
             return tex;
         }else{
@@ -419,11 +440,11 @@ class Wall {
         }
     }
 
-    public void hit(){
+    public void hit(){//Update life counter
         life--;
     }
 
-    public boolean getActive(){
+    public boolean getActive(){//Gets whether or not the wall is still active
         if (life<=0){
             return false;
         }else{
@@ -444,11 +465,11 @@ class Wall {
     }
 }
 
-class Alien {
+//****--ALIEN--****
+class Alien {//Alien Class for alien sprites
     private float x,y;
-    private String type;
+    private String type;//1 of the 3 types of aliens
     private Rectangle rect=new Rectangle();
-    private boolean alive=true;
 
     public Alien(float x,float y,String type){
         this.x=x;
@@ -489,7 +510,8 @@ class Alien {
     }
 }
 
-class Laser {
+//****--LASER--****
+class Laser {//Laser class with direction, updated every time update() is called
     private int x, y, dir;
     private boolean active=true;
     private Rectangle rect = new Rectangle();
@@ -517,7 +539,7 @@ class Laser {
         return this.y;
     }
 
-    public void update(){
+    public void update(){//Updates laser location
         y+=dir;
         rect.setY(y);
         if (y>Gdx.graphics.getHeight()||y<0){
