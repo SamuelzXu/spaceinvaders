@@ -25,7 +25,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.Rectangle;
 
 import java.util.ArrayList;
@@ -73,18 +72,17 @@ public class SpaceInvaders extends ApplicationAdapter implements InputProcessor{
         if (checkGame() == 3) {
             updateAll();
             drawAll();
-
-
             shot();
         }
-
-
         if (checkGame()==1){
             batch.draw(sprites.get("winner"),0,0);
+            System.out.println(score);
+            System.out.println("Press space to play again");
         }else if (checkGame()==2){
             batch.draw(sprites.get("gameover"),130,150);
+            System.out.println(score);
+            System.out.println("Press space to play again");
         }
-
         batch.end();
     }
 
@@ -187,7 +185,7 @@ public class SpaceInvaders extends ApplicationAdapter implements InputProcessor{
         }
     }
     private void loadPlayer(){//Sets players starting positions
-        playerRect.set(playerX,playerY,250,25);
+        playerRect.set(playerX,playerY,40,25);
     }
 
     private void takeInput() {//Handles user input
@@ -374,6 +372,7 @@ public class SpaceInvaders extends ApplicationAdapter implements InputProcessor{
     }
 
     private void reload(){//Reloads all game arrayLists
+        score=0;
         aliens.clear();
         playerLasers.clear();
         alienLasers.clear();
@@ -384,6 +383,41 @@ public class SpaceInvaders extends ApplicationAdapter implements InputProcessor{
 
     @Override
     public void dispose() {
+        sprites.get("winner").dispose();
+        sprites.get("gameover").dispose();
+        sprites.get("alien1A").dispose();
+        sprites.get("alien1B").dispose();
+        sprites.get("alien2A").dispose();
+        sprites.get("alien2B").dispose();
+        sprites.get("alien3A").dispose();
+        sprites.get("alien3B").dispose();
+        sprites.get("title").dispose();
+        sprites.get("player").dispose();
+        sprites.get("laser").dispose();
+        sprites.get("boom").dispose();
+        sprites.get("wall1A").dispose();
+        sprites.get("wall1B").dispose();
+        sprites.get("wall1C").dispose();
+        sprites.get("wall2A").dispose();
+        sprites.get("wall2B").dispose();
+        sprites.get("wall2C").dispose();
+        sprites.get("wall3A").dispose();
+        sprites.get("wall3B").dispose();
+        sprites.get("wall1Ab").dispose();
+        sprites.get("wall1Bb").dispose();
+        sprites.get("wall1Cb").dispose();
+        sprites.get("wall2Ab").dispose();
+        sprites.get("wall2Bb").dispose();
+        sprites.get("wall2Cb").dispose();
+        sprites.get("wall3Ab").dispose();
+        sprites.get("wall3Bb").dispose();
+        sounds.get("snd1").dispose();
+        sounds.get("snd2").dispose();
+        sounds.get("snd3").dispose();
+        sounds.get("snd4").dispose();
+        sounds.get("fire").dispose();
+        sounds.get("die").dispose();
+        sounds.get("destroy").dispose();
         batch.dispose();
     }
 
